@@ -11,6 +11,13 @@ This project is split into two main files:
 
 All the files needed to run the "Object Detection" Python Software are provided in the "aditional_files" folder.
 
+### Dependencies
+- Python 3.10.X
+- TensorFlow GPU 2.10
+- Numpy
+- Pandas
+- OpenCV (cv2)
+
 ## Dataset links
 
 Below are listed the datasets' links used in this project model:
