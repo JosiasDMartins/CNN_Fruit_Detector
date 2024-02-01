@@ -4,3 +4,6 @@
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
+Detection Software/__pycache__/group_boxes.cpython-311.pyc
+Detection Software/__pycache__/resize.cpython-311.pyc
+Detection Software/__pycache__/workers.cpython-311.pyc
