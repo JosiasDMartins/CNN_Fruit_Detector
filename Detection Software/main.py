@@ -15,7 +15,7 @@
 # TensorFlow 2.10 or newer
 
 # Files:
-# class_names csv file
+# class_names csv fileq
 # fruits.mp4 video
 # fruits_model.h5 file
 
@@ -30,10 +30,11 @@ import pandas as pd
 from workers import ExctractFrames, AnalyseBuffer
 from queue import Queue
 from group_boxes import group_boxes
+import threading
 
 # Model definitions
-width = 240
-height = 240
+model_width = 240
+model_height = 240
 
 # Video resolution definitions
 video_width = 1280
@@ -76,14 +77,18 @@ if __name__ == '__main__':
     current_frame_queue = Queue()
     detections_queue = Queue()
     detections_history = {}  # Creating an empty dictionary
+    frame_event = threading.Event()
+    detection_event = threading.Event()
 
     # Threads
     # Extracting frames / ROI using extract_frames function
     extract_frames = ExctractFrames(
         current_frame_queue,
         pyramid_queue,
-        window_height,
         window_width,
+        window_height,
+        model_width,
+        model_height,
         buffer_queue
     )
     analyse_buffer = AnalyseBuffer(
@@ -93,7 +98,10 @@ if __name__ == '__main__':
         classes,
         detections_history,
         window_width,
-        window_height
+        window_height,
+        model_width,
+        model_height,
+        frame_event,
     )
 
     extract_frames.start()
@@ -110,6 +118,7 @@ if __name__ == '__main__':
         # Starting the image pyramid
         pyramid_queue.put([frame])
         current_frame_queue.put(frame)   # Saving the first frame
+
 
         # Evaluate the frame
         if not detections_queue.empty():
@@ -155,9 +164,17 @@ if __name__ == '__main__':
                         (255, 0, 0),
                         2
                     )
+                detection_event.set()
+        else:
+            if frame_event.is_set():
+                detection_event.set()
+                frame_event.clear()
+
 
         # Display the frame with stable detection boxes in real time
-        cv2.imshow('Real-time Fruit Detection', frame)
+        if detection_event.is_set():
+            cv2.imshow('Real-time Fruit Detection', frame)
+            detection_event.clear()
 
         # Check if the 'q' key was pressed to close the application
         if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -1,4 +1,6 @@
 # Function to resize all images during the load process
+import cv2
+import numpy as np
 def resize(image, width, height):
     # Define the desired width and height
     desired_width, desired_height = width, height

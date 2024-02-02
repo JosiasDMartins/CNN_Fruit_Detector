@@ -1,3 +1,5 @@
+import pandas as pd
+
 # This function is responsible to group overlaped boxes to simplify the visualization
 def group_boxes(boxes):
     boxes_agrup = []  # boxes agrupation list
